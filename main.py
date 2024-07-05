@@ -21,7 +21,7 @@ console = Console()
 
 def check_proxy(proxy):
     try:
-        response = requests.get("https://httpbin.org/ip", proxies={"http": proxy, "https": proxy}, timeout=2)
+        response = requests.get("https://google.com", proxies={"http": proxy, "https": proxy}, timeout=2)
         if response.status_code == 200:
             return True
         else:
@@ -36,7 +36,7 @@ def load_proxies(url="https://raw.githubusercontent.com/monosans/proxy-list/main
         response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
         response.raise_for_status()
         proxy_list = response.text.splitlines()
-        proxy_list = proxy_list[:500]
+        proxy_list = proxy_list[:1000]
         with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
             futures = {executor.submit(check_proxy, proxy): proxy for proxy in proxy_list}
             for future in track(concurrent.futures.as_completed(futures), description="Proxy verification"):
@@ -63,7 +63,6 @@ error_log = open("errors.log", "a")
 def get(url, i):
     global request_count
     while True:
-        time.sleep(0.001)
         proxy = {'http': f'http://{random.choice(proxiess)}'}
         head = random.choice(header)
         try:
